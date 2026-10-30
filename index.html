@@ -201,14 +201,11 @@
         <h1>Recipe software for beer, cider, mead, and wine.</h1>
         <p class="lede">Kettle Logic helps you plan what you're making, see how it will turn out, and get through brew day. It's fast, it's easy on the eyes, and it feels right on your computer.</p>
 
-        <!-- Download button (restore when launching)
         <a class="btn js-download" href="#download">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
           <span class="js-download-label">Download Kettle Logic</span>
         </a>
         <p class="others js-others">Available for <a class="js-link-mac" href="#download">Mac</a>, <a class="js-link-win" href="#download">Windows</a>, and <a class="js-link-linux" href="#download">Linux</a>.</p>
-        -->
-        <button class="btn" type="button" disabled>Coming soon</button>
         <p class="fine">Free to download. Takes about a minute to install.</p>
       </div>
 
@@ -379,6 +376,35 @@
     </div>
   </section>
 
+  <!-- ===== Contribute ===== -->
+  <section id="contribute">
+    <div class="wrap">
+      <h2>Help make Kettle Logic better.</h2>
+      <p class="intro">Kettle Logic is developed in the open. Bug reports, ideas, and code are all welcome.</p>
+
+      <dl class="features">
+        <div>
+          <dt>Report a bug</dt>
+          <dd>Found something that doesn't work, or a number that looks wrong? Tell us what you did and what you expected on the <a href="https://github.com/Kettle-Logic/kettle-logic/issues">issues page</a>.</dd>
+        </div>
+        <div>
+          <dt>Suggest a feature</dt>
+          <dd>Missing an ingredient, a brewing system, or a workflow? Share the idea with us on the <a href="https://github.com/Kettle-Logic/kettle-logic/issues">issues page</a>.</dd>
+        </div>
+        <div>
+          <dt>Check the math</dt>
+          <dd>If you know your numbers, compare Kettle Logic's results with your own brew notes or a reference, and tell us where they differ.</dd>
+        </div>
+        <div>
+          <dt>Write code</dt>
+          <dd>Fix a bug or add something yourself. <a href="https://github.com/Kettle-Logic/kettle-logic/fork">Fork the repository</a>, make your change, and open a pull request.</dd>
+        </div>
+      </dl>
+
+      <p style="margin-top: 40px;"><a class="btn" href="https://github.com/Kettle-Logic/kettle-logic">View the repository</a></p>
+    </div>
+  </section>
+
   <!-- ===== Final CTA ===== -->
   <section class="finale" id="download">
     <div class="wrap">
@@ -386,14 +412,11 @@
       <h2>Your next batch starts here.</h2>
       <p>Download Kettle Logic and plan your first recipe in a few minutes.</p>
 
-      <!-- Download button (restore when launching)
       <a class="btn on-dark js-download" href="#download">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
         <span class="js-download-label">Download Kettle Logic</span>
       </a>
       <p class="others js-others">Also available for <a class="js-link-mac" href="#download">Mac</a>, <a class="js-link-win" href="#download">Windows</a>, and <a class="js-link-linux" href="#download">Linux</a>.</p>
-      -->
-      <button class="btn on-dark" type="button" disabled>Coming soon</button>
     </div>
   </section>
 </main>
@@ -405,20 +428,17 @@
   </div>
 </footer>
 
-<!-- Download logic (restore when launching)
 <script>
   /* ------------------------------------------------------------------
-     EDIT THESE: point at your real release downloads.
-     "latest" links always send people to your newest release.
-     To link a file directly, use something like:
-       https://github.com/YOU/kettle-logic/releases/latest/download/KettleLogic.dmg
+     Download links. Only the macOS build is released so far. Windows
+     and Linux stay "coming soon" until a URL is set for them here.
   ------------------------------------------------------------------ */
-  const REPO = "https://github.com/YOUR-NAME/kettle-logic";
+  const REPO = "https://github.com/Kettle-Logic/kettle-logic";
   const DOWNLOADS = {
     mac: "https://github.com/Kettle-Logic/kettle-logic/releases/download/0.1.0/KettleLogic-0.1.0-macos.dmg",
-    win: REPO + "/releases/latest",
-    linux: REPO + "/releases/latest",
-    any: REPO + "/releases/latest"
+    win: null,
+    linux: null,
+    any: null
   };
 
   /* ----- Pick the right download for this visitor ----- */
@@ -433,22 +453,27 @@
       else if (/linux/i.test(ua) || /Linux/.test(full)) os = "linux";
     }
 
-    const names = { mac: "Mac", win: "Windows", linux: "Linux" };
-    const label = { mac: "Download for Mac", win: "Download for Windows", linux: "Download for Linux", any: "Download Kettle Logic" }[os];
-    document.querySelectorAll(".js-download").forEach(a => a.href = DOWNLOADS[os]);
+    const label = { mac: "Download for Mac", win: "Windows coming soon", linux: "Linux coming soon", any: "Coming soon" }[os];
+    const url = DOWNLOADS[os];
+    document.querySelectorAll(".js-download").forEach(a => {
+      if (url) {
+        a.href = url;
+        a.removeAttribute("aria-disabled");
+      } else {
+        a.href = "#download";
+        a.setAttribute("aria-disabled", "true");
+      }
+    });
     document.querySelectorAll(".js-download-label").forEach(s => s.textContent = label);
     document.querySelectorAll(".js-repo").forEach(a => a.href = REPO);
 
-    const link = id => '<a href="' + DOWNLOADS[id] + '">' + names[id] + '</a>';
-    const ids = Object.keys(names);
-    const others = ids.filter(id => id !== os);
-    const joined = list => list.length === 1 ? list[0] : list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
+    const macLink = '<a href="' + DOWNLOADS.mac + '">Mac</a>';
     document.querySelectorAll(".js-others").forEach(p => {
-      if (os === "any") p.innerHTML = "Available for " + joined(ids.map(link)) + ". Open this page on your computer to install.";
-      else p.innerHTML = "Using a different computer? Get it for " + joined(others.map(link)) + ".";
+      if (os === "mac") p.innerHTML = "Windows and Linux versions are coming soon.";
+      else if (os === "any") p.innerHTML = "Available for " + macLink + ". Open this page on your Mac to install.";
+      else p.innerHTML = "Using a different computer? Get it for " + macLink + ".";
     });
   })();
 </script>
--->
 </body>
 </html>
