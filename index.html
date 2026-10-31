@@ -436,7 +436,7 @@
   const REPO = "https://github.com/Kettle-Logic/kettle-logic";
   const DOWNLOADS = {
     mac: "https://github.com/Kettle-Logic/kettle-logic/releases/download/0.1.0/KettleLogic-0.1.0-macos.dmg",
-    win: null,
+    win: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.1.0/KettleLogic-Setup-0.1.0-x64.exe",
     linux: null,
     any: null
   };
@@ -453,7 +453,7 @@
       else if (/linux/i.test(ua) || /Linux/.test(full)) os = "linux";
     }
 
-    const label = { mac: "Download for Mac", win: "Windows coming soon", linux: "Linux coming soon", any: "Coming soon" }[os];
+    const label = { mac: "Download for Mac", win: "Download for Windows", linux: "Linux coming soon", any: "Coming soon" }[os];
     const url = DOWNLOADS[os];
     document.querySelectorAll(".js-download").forEach(a => {
       if (url) {
@@ -467,11 +467,19 @@
     document.querySelectorAll(".js-download-label").forEach(s => s.textContent = label);
     document.querySelectorAll(".js-repo").forEach(a => a.href = REPO);
 
-    const macLink = '<a href="' + DOWNLOADS.mac + '">Mac</a>';
+    const names = { mac: "Mac", win: "Windows", linux: "Linux" };
+    const link = id => '<a href="' + DOWNLOADS[id] + '">' + names[id] + '</a>';
+    const joined = list => list.length === 1 ? list[0] : list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
+    const ids = Object.keys(names);
+    const ready = ids.filter(id => DOWNLOADS[id]);
+    const soon = ids.filter(id => !DOWNLOADS[id]).map(id => names[id]);
+    const others = ready.filter(id => id !== os);
     document.querySelectorAll(".js-others").forEach(p => {
-      if (os === "mac") p.innerHTML = "Windows and Linux versions are coming soon.";
-      else if (os === "any") p.innerHTML = "Available for " + macLink + ". Open this page on your Mac to install.";
-      else p.innerHTML = "Using a different computer? Get it for " + macLink + ".";
+      let text = "";
+      if (os === "any") text = "Available for " + joined(ready.map(link)) + ". Open this page on your computer to install.";
+      else if (others.length) text = "Using a different computer? Get it for " + joined(others.map(link)) + ".";
+      if (soon.length && os !== "any") text += (text ? " " : "") + joined(soon) + (soon.length === 1 ? " is" : " are") + " coming soon.";
+      p.innerHTML = text;
     });
   })();
 </script>
