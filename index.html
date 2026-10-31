@@ -437,7 +437,7 @@
   const DOWNLOADS = {
     mac: "https://github.com/Kettle-Logic/kettle-logic/releases/download/0.1.0/KettleLogic-0.1.0-macos.dmg",
     win: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.1.0/KettleLogic-Setup-0.1.0-x64.exe",
-    linux: null,
+    linux: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.1.0/KettleLogic-0.1.0-x86_64.flatpak",
     any: null
   };
 
@@ -453,7 +453,7 @@
       else if (/linux/i.test(ua) || /Linux/.test(full)) os = "linux";
     }
 
-    const label = { mac: "Download for Mac", win: "Download for Windows", linux: "Linux coming soon", any: "Coming soon" }[os];
+    const label = { mac: "Download for Mac", win: "Download for Windows", linux: "Download for Linux", any: "Coming soon" }[os];
     const url = DOWNLOADS[os];
     document.querySelectorAll(".js-download").forEach(a => {
       if (url) {
