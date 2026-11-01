@@ -235,7 +235,11 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
   .nerd ol { margin: 0 0 14px; padding-left: 1.4em; }
   .nerd pre { margin: 10px 0 14px; padding: 12px 16px; background: var(--mist); border: 1px solid var(--steel); border-radius: 8px; overflow-x: auto; font-size: 0.9rem; line-height: 1.5; }
   .nerd code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--stout); }
-  .nerd .js-hash-value { word-break: break-all; }
+  .hash-table { overflow-x: auto; margin: 0 0 18px; }
+  .hash-table table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+  .hash-table th, .hash-table td { text-align: left; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--steel); vertical-align: top; }
+  .hash-table thead th { color: var(--stout); border-bottom: 2px solid var(--stout); }
+  .hash-table td:last-child { word-break: break-all; min-width: 18em; }
 
   /* Final CTA */
   .finale { background: var(--finale-bg); color: var(--finale-fg); }
@@ -297,7 +301,7 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
         </a>
         <p class="others js-others">Available for <a class="js-link-mac" href="#download">Mac</a>, <a class="js-link-win" href="#download">Windows</a>, and <a class="js-link-linux" href="#download">Linux</a>.</p>
         <p class="fine">Free to download. Takes about a minute to install.</p>
-        <p class="fine js-win-note" hidden>The Windows app is self-signed, so Windows may show a certificate warning when you install it. <a class="js-open-signing" href="#windows-signing">See more</a></p>
+        <p class="fine js-win-note" hidden>The Windows app is self-signed, so Windows may show a certificate warning when you install it. <a class="js-open-signing" href="#verify-download">See more</a></p>
       </div>
 
       <div class="shelf">
@@ -506,31 +510,33 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
     </div>
   </section>
 
-  <!-- ===== Windows signing ===== -->
-  <section id="windows-signing" style="padding-block: 0 96px;">
+  <!-- ===== Verify download ===== -->
+  <section id="verify-download" style="padding-block: 0 96px;">
     <div class="wrap">
-      <details class="nerd" id="windows-signing-details">
-        <summary>Windows download: self-signing and file hashes</summary>
+      <details class="nerd" id="verify-download-details">
+        <summary>Verify your download: file hashes and Windows self-signing</summary>
         <div>
-          <h3>What self-signing means</h3>
+          <h3>Check the file hash</h3>
+          <p>A SHA-256 hash is a fingerprint of a file. If the fingerprint of your download matches the one published here, it's the same file we released.</p>
+          <div class="hash-table">
+            <table>
+              <thead><tr><th scope="col">File</th><th scope="col">SHA-256</th></tr></thead>
+              <tbody class="js-hash-rows"></tbody>
+            </table>
+          </div>
+          <p>Download the file, but don't open it yet. Then run the command for your system in the folder with the file, and compare the result with the hash above. Capitalization doesn't matter, but every character must match.</p>
+          <p><strong>Windows</strong> (PowerShell):</p>
+          <pre><code>Get-FileHash .\<span class="js-file-win"></span> -Algorithm SHA256</code></pre>
+          <p><strong>macOS</strong> (Terminal):</p>
+          <pre><code>shasum -a 256 <span class="js-file-mac"></span></code></pre>
+          <p><strong>Linux</strong> (terminal):</p>
+          <pre><code>sha256sum <span class="js-file-linux"></span></code></pre>
+          <p>If the hashes differ, don't open the file. Delete it and download it again, and <a href="https://github.com/Kettle-Logic/kettle-logic/issues">let us know</a> if it keeps happening.</p>
+
+          <h3>What Windows self-signing means</h3>
           <p>Code signing attaches a digital signature to an installer. The signature shows that the file hasn't been changed since it was signed, and it names who signed it. Windows checks this when you open a downloaded file.</p>
           <p>Most signed apps use a certificate bought from a company Windows already trusts. Kettle Logic's Windows build is self-signed instead: we made the certificate ourselves. The file is still signed, but Windows has no way to know who we are, so it may show a warning such as "Windows protected your PC" or "Unknown publisher".</p>
-          <p>If you trust where you got the file, you can choose <strong>More info</strong>, then <strong>Run anyway</strong>. If you'd like to check first, use the file hash below.</p>
-
-          <h3>Check the file hash</h3>
-          <p>A SHA-256 hash is a fingerprint of a file. If the fingerprint of your download matches the one published here, the file is the same one we released.</p>
-          <ol>
-            <li>Download the installer, but don't run it yet.</li>
-            <li>Open PowerShell in the folder with the file and run:
-              <pre><code>Get-FileHash .\<span class="js-hash-file">KettleLogic-Setup-x64.exe</span> -Algorithm SHA256</code></pre>
-              Or, in Command Prompt:
-              <pre><code>certutil -hashfile <span class="js-hash-file">KettleLogic-Setup-x64.exe</span> SHA256</code></pre>
-            </li>
-            <li>Compare the result with the hash below. Capitalization doesn't matter, but every character must match.</li>
-          </ol>
-          <p class="js-hash-box" hidden>SHA-256 for <strong class="js-hash-file">KettleLogic-Setup-x64.exe</strong>:</p>
-          <pre class="js-hash-box" hidden><code class="js-hash-value"></code></pre>
-          <p>If the hashes differ, don't run the file. Delete it and download it again, and <a href="https://github.com/Kettle-Logic/kettle-logic/issues">let us know</a> if it keeps happening.</p>
+          <p>If you trust where you got the file, you can choose <strong>More info</strong>, then <strong>Run anyway</strong>. If you'd like to check first, use the file hash above.</p>
         </div>
       </details>
     </div>
@@ -548,7 +554,7 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
         <span class="js-download-label">Download Kettle Logic</span>
       </a>
       <p class="others js-others">Also available for <a class="js-link-mac" href="#download">Mac</a>, <a class="js-link-win" href="#download">Windows</a>, and <a class="js-link-linux" href="#download">Linux</a>.</p>
-      <p class="fine js-win-note" hidden>The Windows app is self-signed, so Windows may show a certificate warning when you install it. <a class="js-open-signing" href="#windows-signing">See more</a></p>
+      <p class="fine js-win-note" hidden>The Windows app is self-signed, so Windows may show a certificate warning when you install it. <a class="js-open-signing" href="#verify-download">See more</a></p>
     </div>
   </section>
 </main>
@@ -569,8 +575,15 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
   const DOWNLOADS = {
     mac: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.2.0/KettleLogic-0.2.0-macos.dmg",
     win: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.2.0/KettleLogic-Setup-0.2.0-x64.exe",
-    linux: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.1.0/KettleLogic-0.1.0-x86_64.flatpak",
+    linux: "https://github.com/Kettle-Logic/Kettle-Logic/releases/download/app-v0.2.0/KettleLogic-0.2.0-x86_64.flatpak",
     any: null
+  };
+
+  /* SHA-256 of each installer. Update these whenever a download link above changes. */
+  const SHA256 = {
+    mac: "4ab36268c1bc404a6e38a78ccb1a1b23c2ebee256f80699a7f4a271ec4743e82",
+    win: "031e80918d81c348247f48ddf4bcb39563abb27df3ff5e8aaf6ead902d5eb09c",
+    linux: "796b32d079429075701179f881d11a1bf69e8072ee068ed0bcc99fb635dc7a88"
   };
 
   /* ----- Pick the right download for this visitor ----- */
@@ -617,20 +630,24 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
     });
   })();
 
-  /* ----- Windows hash and "See more" ----- */
+  /* ----- File hashes and "See more" ----- */
   (function () {
-    /* SHA-256 of the Windows installer. Update it whenever the Windows download link changes. */
-    const WIN_SHA256 = "031e80918d81c348247f48ddf4bcb39563abb27df3ff5e8aaf6ead902d5eb09c";
-    const details = document.getElementById("windows-signing-details");
-    const file = DOWNLOADS.win ? decodeURIComponent(DOWNLOADS.win.split("/").pop()) : "";
-    if (file) document.querySelectorAll(".js-hash-file").forEach(el => el.textContent = file);
-    if (WIN_SHA256) {
-      document.querySelector(".js-hash-value").textContent = WIN_SHA256;
-      document.querySelectorAll(".js-hash-box").forEach(el => el.hidden = false);
-    }
+    const details = document.getElementById("verify-download-details");
+    const rows = document.querySelector(".js-hash-rows");
+    ["mac", "win", "linux"].forEach(id => {
+      if (!DOWNLOADS[id]) return;
+      const file = decodeURIComponent(DOWNLOADS[id].split("/").pop());
+      document.querySelectorAll(".js-file-" + id).forEach(el => el.textContent = file);
+      const tr = rows.insertRow();
+      tr.insertCell().textContent = file;
+      const cell = tr.insertCell();
+      const code = document.createElement("code");
+      code.textContent = SHA256[id];
+      cell.appendChild(code);
+    });
     const open = () => { details.open = true; };
     document.querySelectorAll(".js-open-signing").forEach(a => a.addEventListener("click", open));
-    if (location.hash === "#windows-signing") open();
+    if (location.hash === "#verify-download") open();
   })();
 
   /* ----- Light/dark toggle ----- */
