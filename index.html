@@ -141,6 +141,11 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
   .finale .os-select { background: transparent; color: var(--finale-fg); border-color: #6b6159; }
   .finale .os-select:hover { border-color: var(--finale-fg); }
   .finale .os-select option { background: var(--finale-bg); color: var(--finale-fg); }
+  .hash-line { margin: 14px 0 0; max-width: 40ch; font-size: 0.85rem; line-height: 1.45; color: var(--stout-soft); }
+  .hash-line span { font-weight: 600; }
+  .hash-line code { display: block; margin: 2px 0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; word-break: break-all; }
+  .hash-line a { color: inherit; font-weight: 600; text-underline-offset: 3px; }
+  .finale .hash-line { color: var(--finale-soft); }
   .fine { margin-top: 6px; font-size: 0.95rem; color: var(--stout-soft); }
   .fine a { text-underline-offset: 3px; }
 
@@ -308,6 +313,7 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
           <span class="js-download-label">Download Kettle Logic</span>
         </a>
+        <p class="hash-line js-hash-line" hidden><span>SHA-256</span> <code class="js-hash-inline"></code> <a class="js-open-signing" href="#verify-download">How to verify</a></p>
         <label class="others">Download for
           <select class="os-select js-os-select" aria-label="Choose your operating system">
             <option value="mac">Mac</option>
@@ -568,6 +574,7 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
         <span class="js-download-label">Download Kettle Logic</span>
       </a>
+      <p class="hash-line js-hash-line" hidden><span>SHA-256</span> <code class="js-hash-inline"></code> <a class="js-open-signing" href="#verify-download">How to verify</a></p>
       <label class="others">Download for
         <select class="os-select js-os-select" aria-label="Choose your operating system">
           <option value="mac">Mac</option>
@@ -628,6 +635,7 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
     /* Point every download button at the chosen system. On phones, where nothing here can be installed, the buttons stay inactive until a system is chosen. */
     function choose(id) {
       const url = DOWNLOADS[id];
+      document.documentElement.dataset.os = id;
       document.querySelectorAll(".js-download").forEach(a => {
         if (url) {
           a.href = url;
@@ -639,6 +647,8 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
       });
       document.querySelectorAll(".js-download-label").forEach(s => s.textContent = names[id] ? "Download for " + names[id] : "Download Kettle Logic");
       document.querySelectorAll(".js-win-note").forEach(p => p.hidden = id !== "win");
+      document.querySelectorAll(".js-hash-inline").forEach(c => c.textContent = SHA256[id] || "");
+      document.querySelectorAll(".js-hash-line").forEach(p => p.hidden = !SHA256[id]);
       selects.forEach(sel => sel.value = id);
     }
 
