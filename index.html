@@ -132,6 +132,15 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
 
   .others { margin-top: 18px; font-size: 1rem; color: var(--stout-soft); }
   .others a { font-weight: 600; color: var(--stout); text-underline-offset: 4px; }
+  .others { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .os-select {
+    font: inherit; font-weight: 600; color: var(--stout); cursor: pointer;
+    background: var(--paper); border: 1px solid var(--steel); border-radius: 999px; padding: 6px 14px;
+  }
+  .os-select:hover { border-color: var(--stout); }
+  .finale .os-select { background: transparent; color: var(--finale-fg); border-color: #6b6159; }
+  .finale .os-select:hover { border-color: var(--finale-fg); }
+  .finale .os-select option { background: var(--finale-bg); color: var(--finale-fg); }
   .fine { margin-top: 6px; font-size: 0.95rem; color: var(--stout-soft); }
   .fine a { text-underline-offset: 3px; }
 
@@ -299,7 +308,13 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
           <span class="js-download-label">Download Kettle Logic</span>
         </a>
-        <p class="others js-others">Available for <a class="js-link-mac" href="#download">Mac</a>, <a class="js-link-win" href="#download">Windows</a>, and <a class="js-link-linux" href="#download">Linux</a>.</p>
+        <label class="others">Download for
+          <select class="os-select js-os-select" aria-label="Choose your operating system">
+            <option value="mac">Mac</option>
+            <option value="win">Windows</option>
+            <option value="linux">Linux</option>
+          </select>
+        </label>
         <p class="fine">Free to download. Takes about a minute to install.</p>
         <p class="fine js-win-note" hidden>The Windows app is self-signed, so Windows may show a certificate warning when you install it. <a class="js-open-signing" href="#verify-download">See more</a></p>
       </div>
@@ -553,7 +568,13 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
         <span class="js-download-label">Download Kettle Logic</span>
       </a>
-      <p class="others js-others">Also available for <a class="js-link-mac" href="#download">Mac</a>, <a class="js-link-win" href="#download">Windows</a>, and <a class="js-link-linux" href="#download">Linux</a>.</p>
+      <label class="others">Download for
+        <select class="os-select js-os-select" aria-label="Choose your operating system">
+          <option value="mac">Mac</option>
+          <option value="win">Windows</option>
+          <option value="linux">Linux</option>
+        </select>
+      </label>
       <p class="fine js-win-note" hidden>The Windows app is self-signed, so Windows may show a certificate warning when you install it. <a class="js-open-signing" href="#verify-download">See more</a></p>
     </div>
   </section>
@@ -599,35 +620,37 @@ try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") 
     }
 
     document.documentElement.dataset.os = os;
-    document.querySelectorAll(".js-win-note").forEach(p => p.hidden = os !== "win");
-    const label = { mac: "Download for Mac", win: "Download for Windows", linux: "Download for Linux", any: "Coming soon" }[os];
-    const url = DOWNLOADS[os];
-    document.querySelectorAll(".js-download").forEach(a => {
-      if (url) {
-        a.href = url;
-        a.removeAttribute("aria-disabled");
-      } else {
-        a.href = "#download";
-        a.setAttribute("aria-disabled", "true");
-      }
-    });
-    document.querySelectorAll(".js-download-label").forEach(s => s.textContent = label);
     document.querySelectorAll(".js-repo").forEach(a => a.href = REPO);
 
     const names = { mac: "Mac", win: "Windows", linux: "Linux" };
-    const link = id => '<a href="' + DOWNLOADS[id] + '">' + names[id] + '</a>';
-    const joined = list => list.length === 1 ? list[0] : list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
-    const ids = Object.keys(names);
-    const ready = ids.filter(id => DOWNLOADS[id]);
-    const soon = ids.filter(id => !DOWNLOADS[id]).map(id => names[id]);
-    const others = ready.filter(id => id !== os);
-    document.querySelectorAll(".js-others").forEach(p => {
-      let text = "";
-      if (os === "any") text = "Available for " + joined(ready.map(link)) + ". Open this page on your computer to install.";
-      else if (others.length) text = "Using a different computer? Get it for " + joined(others.map(link)) + ".";
-      if (soon.length && os !== "any") text += (text ? " " : "") + joined(soon) + (soon.length === 1 ? " is" : " are") + " coming soon.";
-      p.innerHTML = text;
-    });
+    const selects = document.querySelectorAll(".js-os-select");
+
+    /* Point every download button at the chosen system. On phones, where nothing here can be installed, the buttons stay inactive until a system is chosen. */
+    function choose(id) {
+      const url = DOWNLOADS[id];
+      document.querySelectorAll(".js-download").forEach(a => {
+        if (url) {
+          a.href = url;
+          a.removeAttribute("aria-disabled");
+        } else {
+          a.href = "#download";
+          a.setAttribute("aria-disabled", "true");
+        }
+      });
+      document.querySelectorAll(".js-download-label").forEach(s => s.textContent = names[id] ? "Download for " + names[id] : "Download Kettle Logic");
+      document.querySelectorAll(".js-win-note").forEach(p => p.hidden = id !== "win");
+      selects.forEach(sel => sel.value = id);
+    }
+
+    if (os === "any") {
+      selects.forEach(sel => {
+        const o = new Option("Choose your computer", "any");
+        o.disabled = true;
+        sel.insertBefore(o, sel.firstChild);
+      });
+    }
+    selects.forEach(sel => sel.addEventListener("change", () => choose(sel.value)));
+    choose(os);
   })();
 
   /* ----- File hashes and "See more" ----- */
