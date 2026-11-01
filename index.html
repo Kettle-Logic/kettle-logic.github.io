@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PY07X821LX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-PY07X821LX');
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kettle Logic: recipe software for beer, cider, mead, and wine</title>
 <meta name="description" content="Kettle Logic is fast, good-looking recipe software for making beer, cider, mead, and wine at home. Made for Mac, Windows, and Linux.">
@@ -482,6 +489,14 @@
       p.innerHTML = text;
     });
   })();
+
+  /* ----- Count clicks on download links (Google Analytics) ----- */
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a[href]");
+    if (!a) return;
+    const platform = Object.keys(DOWNLOADS).find(id => DOWNLOADS[id] && a.href === DOWNLOADS[id]);
+    if (platform) gtag("event", "file_download", { platform: platform, link_url: a.href });
+  });
 </script>
 </body>
 </html>
