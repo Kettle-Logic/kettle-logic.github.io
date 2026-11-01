@@ -10,6 +10,10 @@ gtag('js', new Date());
 gtag('config', 'G-PY07X821LX');
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 <title>Kettle Logic: recipe software for beer, cider, mead, and wine</title>
 <meta name="description" content="Kettle Logic is fast, good-looking recipe software for making beer, cider, mead, and wine at home. Made for Mac, Windows, and Linux.">
 <meta property="og:title" content="Kettle Logic">
@@ -29,10 +33,52 @@ gtag('config', 'G-PY07X821LX');
     --steel: #b9c4c4;
     --foam: #fbf8f0;
     --amber: #c1963c;
+    --finale-bg: #1b1410;
+    --finale-fg: #fbf8f0;
+    --finale-soft: #cfc6bd;
     --radius: 14px;
+    --shot-light: block;
+    --shot-dark: none;
+    color-scheme: light;
     --display: "Bricolage Grotesque", system-ui, sans-serif;
     --body: "Schibsted Grotesk", system-ui, sans-serif;
   }
+
+  /* Dark palette: applied by system preference unless the light theme is chosen, or when dark is chosen explicitly. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --mist: #14100d;
+      --paper: #1e1915;
+      --stout: #f3ede2;
+      --stout-soft: #b9b0a6;
+      --steel: #3b332d;
+      --foam: #1b1410;
+      --finale-bg: #0d0a08;
+      color-scheme: dark;
+    }
+    :root:not([data-theme="light"]) { --shot-light: none; --shot-dark: block; }
+    :root:not([data-theme="light"]) .icon-moon { display: none; }
+    :root:not([data-theme="light"]) .icon-sun { display: block; }
+    :root:not([data-theme="light"]) .shelf svg [stroke="#1b1410"] { stroke: #f3ede2; }
+    :root:not([data-theme="light"]) .shelf svg rect[fill="#1b1410"],
+    :root:not([data-theme="light"]) .brand svg rect { fill: #f3ede2; }
+  }
+  :root[data-theme="dark"] {
+    --mist: #14100d;
+    --paper: #1e1915;
+    --stout: #f3ede2;
+    --stout-soft: #b9b0a6;
+    --steel: #3b332d;
+    --foam: #1b1410;
+    --finale-bg: #0d0a08;
+    color-scheme: dark;
+  }
+  :root[data-theme="dark"] { --shot-light: none; --shot-dark: block; }
+  :root[data-theme="dark"] .icon-moon { display: none; }
+  :root[data-theme="dark"] .icon-sun { display: block; }
+  :root[data-theme="dark"] .shelf svg [stroke="#1b1410"] { stroke: #f3ede2; }
+  :root[data-theme="dark"] .shelf svg rect[fill="#1b1410"],
+  :root[data-theme="dark"] .brand svg rect { fill: #f3ede2; }
 
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -56,10 +102,19 @@ gtag('config', 'G-PY07X821LX');
   .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
   .brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; text-decoration: none; }
   .brand svg { width: 26px; height: 26px; }
+  .brand svg rect { fill: #1b1410; }
   .bar nav { display: flex; gap: 26px; font-size: 1rem; font-weight: 500; }
   .bar nav a { text-decoration: none; color: var(--stout-soft); }
   .bar nav a:hover { color: var(--stout); text-decoration: underline; text-underline-offset: 5px; }
   @media (max-width: 640px) { .bar nav { display: none; } }
+  .bar-end { display: flex; align-items: center; gap: 26px; }
+  .theme-toggle {
+    display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0;
+    border: 1px solid var(--steel); border-radius: 999px; background: var(--paper); color: var(--stout); cursor: pointer;
+  }
+  .theme-toggle:hover { border-color: var(--stout); }
+  .theme-toggle svg { width: 20px; height: 20px; }
+  .icon-sun { display: none; }
 
   /* ---------- Buttons ---------- */
   .btn {
@@ -72,7 +127,7 @@ gtag('config', 'G-PY07X821LX');
   .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 0 -4px var(--amber); }
   .btn:active { transform: translateY(0); box-shadow: none; }
   .btn svg { width: 22px; height: 22px; }
-  .btn.on-dark { background: var(--foam); color: var(--stout); }
+  .btn.on-dark { background: #fbf8f0; color: #1b1410; }
   .btn:disabled { cursor: default; opacity: .55; transform: none; box-shadow: none; }
 
   .others { margin-top: 18px; font-size: 1rem; color: var(--stout-soft); }
@@ -97,6 +152,19 @@ gtag('config', 'G-PY07X821LX');
   @media (max-width: 880px) {
     .hero .wrap { grid-template-columns: 1fr; gap: 40px; }
   }
+
+  /* ---------- Screenshot ---------- */
+  .showcase { padding: 0 0 96px; }
+  .showcase .wrap { width: min(1000px, 100% - 48px); }
+  .showcase img {
+    display: block; width: 100%; height: auto; border-radius: 28px;
+    filter: drop-shadow(0 2px 4px rgba(27, 20, 16, .12)) drop-shadow(0 24px 40px rgba(27, 20, 16, .28));
+  }
+  .showcase .shot-light { display: var(--shot-light); }
+  .showcase .shot-dark { display: var(--shot-dark); }
+  .showcase .shot-win { border-radius: 0; }
+  :root:not([data-os="win"]) .showcase .shot-win,
+  :root[data-os="win"] .showcase .shot-mac { display: none; }
 
   /* ---------- Sections ---------- */
   section { padding: 96px 0; }
@@ -163,14 +231,14 @@ gtag('config', 'G-PY07X821LX');
   @media (max-width: 640px) { .nerd { padding: 0 18px; } }
 
   /* Final CTA */
-  .finale { background: var(--stout); color: var(--foam); }
+  .finale { background: var(--finale-bg); color: var(--finale-fg); }
   .finale h2 { max-width: 16ch; }
-  .finale p { color: #cfc6bd; max-width: 44ch; margin: 0 0 36px; font-size: 1.2rem; }
-  .finale .others { color: #cfc6bd; margin-top: 18px; font-size: 1rem; }
-  .finale .others a { color: var(--foam); }
+  .finale p { color: var(--finale-soft); max-width: 44ch; margin: 0 0 36px; font-size: 1.2rem; }
+  .finale .others { color: var(--finale-soft); margin-top: 18px; font-size: 1rem; }
+  .finale .others a { color: var(--finale-fg); }
   .finale .swatch { width: 120px; height: 10px; border-radius: 999px; background: var(--amber); margin-bottom: 28px; }
 
-  footer { padding: 36px 0 48px; font-size: 0.95rem; background: var(--stout); border-top: 1px solid #3a302a; }
+  footer { padding: 36px 0 48px; font-size: 0.95rem; background: var(--finale-bg); border-top: 1px solid #3a302a; }
   footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: #a99f95; }
   footer a { color: #cfc6bd; }
 
@@ -190,12 +258,18 @@ gtag('config', 'G-PY07X821LX');
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 14h32l-4 40a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4z" fill="#c1963c"/><rect x="12" y="7" width="40" height="11" rx="5.5" fill="#1b1410"/></svg>
       Kettle Logic
     </a>
-    <nav aria-label="Main">
-      <a href="#why">Why it's better</a>
-      <a href="#compare">Compared</a>
-      <a href="#features">What it does</a>
-      <a href="#download">Download</a>
-    </nav>
+    <div class="bar-end">
+      <nav aria-label="Main">
+        <a href="#why">Why it's better</a>
+        <a href="#compare">Compared</a>
+        <a href="#features">What it does</a>
+        <a href="#download">Download</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -256,6 +330,16 @@ gtag('config', 'G-PY07X821LX');
         </svg>
         <div class="shelf-caption" aria-hidden="true"><span>Beer</span><span>Cider</span><span>Mead</span><span>Wine</span></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== Screenshot ===== -->
+  <div class="showcase">
+    <div class="wrap">
+      <img class="shot-mac shot-light" src="images/screenshot.png" width="2338" height="1438" alt="Kettle Logic on a Mac, showing a Blonde Ale recipe with its gravity, ABV, bitterness, and color calculated at the top." loading="lazy">
+      <img class="shot-mac shot-dark" src="images/screenshot-dark.png" width="2338" height="1432" alt="Kettle Logic in dark mode, showing a Blonde Ale recipe with its gravity, ABV, bitterness, and color calculated at the top." loading="lazy">
+      <img class="shot-win shot-light" src="images/screenshot-windows.png" width="1306" height="853" alt="Kettle Logic on Windows, showing a new recipe with its gravity, ABV, bitterness, and color at the top." loading="lazy">
+      <img class="shot-win shot-dark" src="images/screenshot-windows-dark.png" width="1306" height="855" alt="Kettle Logic in dark mode on Windows, showing a new recipe with its gravity, ABV, bitterness, and color at the top." loading="lazy">
     </div>
   </div>
 
@@ -460,6 +544,7 @@ gtag('config', 'G-PY07X821LX');
       else if (/linux/i.test(ua) || /Linux/.test(full)) os = "linux";
     }
 
+    document.documentElement.dataset.os = os;
     const label = { mac: "Download for Mac", win: "Download for Windows", linux: "Download for Linux", any: "Coming soon" }[os];
     const url = DOWNLOADS[os];
     document.querySelectorAll(".js-download").forEach(a => {
@@ -488,6 +573,23 @@ gtag('config', 'G-PY07X821LX');
       if (soon.length && os !== "any") text += (text ? " " : "") + joined(soon) + (soon.length === 1 ? " is" : " are") + " coming soon.";
       p.innerHTML = text;
     });
+  })();
+
+  /* ----- Light/dark toggle ----- */
+  (function () {
+    const root = document.documentElement;
+    const btn = document.querySelector(".theme-toggle");
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
+    const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : query.matches;
+    const sync = () => btn.setAttribute("aria-label", isDark() ? "Switch to light mode" : "Switch to dark mode");
+    btn.addEventListener("click", () => {
+      const next = isDark() ? "light" : "dark";
+      root.dataset.theme = next;
+      try { localStorage.setItem("theme", next); } catch (e) {}
+      sync();
+    });
+    query.addEventListener("change", sync);
+    sync();
   })();
 
   /* ----- Count clicks on download links (Google Analytics) ----- */
